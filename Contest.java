@@ -1,66 +1,89 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
-import java.util.Scanner;
+import java.util.List;
+import java.util.Random;
 
 public class Contest {
 
-    public static ArrayList<Product> prod = new ArrayList<>();
-    public static PriorityQueue<Product> elem = new PriorityQueue<>();
-    public static int count = 0;
+    private List<Toy> list = new ArrayList<>();
+    private int count;
+    
+    
 
-    public static boolean NFE(String str) throws NumberFormatException {
-        try {
-            Integer.parseInt(str);
-            return true;
+    public List<Toy> getToy() {
+        return list;
+     }
 
-        }catch(NumberFormatException exc) {
-            return false;
-        }
-
+    public int getCount() {
+        System.out.println("Количество розыгрываемых игрушек: " + count);
+        return count;
     }
 
-    public void addProduct() {
-        Scanner sc = new Scanner(System.in);
-        String text;
-        int contest;
+ 
+    public List<Toy> addToy(Toy product) {
+        list.add(product);
+        count++;
+        return list;
+    }
 
-        while(true) {
-            System.out.println("Введите название игрушки :");
-            text = sc.nextLine();
 
-            if(text.isEmpty()) {
-                System.out.println("Неверная информация, повторите ввод: ");
-                break;
-            }
-
-            System.out.println("Введите частоту выпаденяи игрушки: ");
-            String val = sc.nextLine();
-
-            if(NFE(val)) {
-                contest = Integer.parseInt(val);
-                
-                if(contest <= 0) {
-                    System.out.println("Неверная информация, повторите ввод: ");
-
-                }else{
-                    Product product = new Product(count, contest, text);
-
-                    if(!prod.contains(product) || prod.size() == 0) {
-                        count++;
-                        prod.add(product);
-                        System.out.println("Добавлена игрушка в коллекцию");
-
-                    }else{
-                        System.out.println("Эта игрушка уже в коллекции");
-                    }
-                }
-
-            }else{
-                System.out.println("Неверная информация, повторите ввод: ");
-            }
-
-            break;
+    public void writeContest() {
+        try(FileWriter f = new FileWriter("save.txt", true)) {
+            String text = list.get(0).getProduct();
+            f.write(text + "\n");
+            f.close();
+        
+        }catch(Exception e) {
+            System.out.println("Ошибка");
         }
     }
+    public void readContest() {
+        try{
+            FileReader r = new FileReader("save.txt");
+            BufferedReader reader = new BufferedReader(r);
+            String text = reader.readLine();
+
+            while(text != null) {
+                System.out.println(text);
+                text = reader.readLine();
+        }
+
+        }catch(Exception e) {
+            System.out.println("Ошибка");
+        }
+    }
+
+    public void contestToy() {
+        int victory = 30;
+        System.out.println("Испытай удачу!");
+        Random random = new Random();
+        int number = random.nextInt(50);
+
+        if(number > victory) {
+            System.out.println("Вы проиграли!");
+
+        }else if(number < victory) {
+            System.out.println("Вы победили!");
+            writeContest();
+            deleteToy(list.get(0));
+        }
+    }
+    
+   
+    public List<Toy> deleteToy(Toy product) {
+        list.remove(product);
+        count--;
+        return list;
+
+    }
+   
+
+    
+    
+
+
+
+   
 }
-
